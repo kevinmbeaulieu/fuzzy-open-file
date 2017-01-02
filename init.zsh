@@ -71,10 +71,17 @@ function fuzzy-open-file() {
         return 0
     fi
 
-    # Search for exact substring
-    fof_filepath=$(mdfind -onlyin $fof_path "kMDItemDisplayName == '*$fof_query*'c" \
+    # Search for exact string
+    fof_filepath=$(mdfind -onlyin $fof_path "kMDItemDisplayName == '$fof_query'c" \
         | grep -v $HOME/Library \
         | head -1)
+
+    # Search for exact substring
+    if [[ -z $fof_filepath ]]; then
+        fof_filepath=$(mdfind -onlyin $fof_path "kMDItemDisplayName == '*$fof_query*'c" \
+            | grep -v $HOME/Library \
+            | head -1)
+    fi
 
     # Fuzzy search
     if [[ -z $fof_filepath ]]; then
