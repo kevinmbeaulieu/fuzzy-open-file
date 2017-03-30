@@ -72,24 +72,33 @@ function fuzzy-open-file() {
     fi
 
     # Search for exact string
-    fof_filepath=$(mdfind -onlyin $fof_path "kMDItemDisplayName == '$fof_query'c" \
-        | grep -v $HOME/Library \
-        | head -1)
+    fof_filepath=$(
+        perl -e '@K=sort{length($a) <=> length($b)}<>; print "$K[0]"' <(
+            mdfind -onlyin $fof_path "kMDItemDisplayName == '$fof_query'c" \
+            | grep -v $HOME/Library
+        )
+    )
 
     # Search for exact substring
     if [[ -z $fof_filepath ]]; then
-        fof_filepath=$(mdfind -onlyin $fof_path "kMDItemDisplayName == '*$fof_query*'c" \
-            | grep -v $HOME/Library \
-            | head -1)
+        fof_filepath=$(
+            perl -e '@K=sort{length($a) <=> length($b)}<>; print "$K[0]"' <(
+                mdfind -onlyin $fof_path "kMDItemDisplayName == '*$fof_query*'c" \
+                | grep -v $HOME/Library
+            )
+        )
     fi
 
     # Fuzzy search
     if [[ -z $fof_filepath ]]; then
         fof_query="*$(echo "$fof_query" | sed 's/./&\*/g')" # query => *q*u*e*r*y*
 
-        fof_filepath=$(mdfind -onlyin $fof_path "kMDItemDisplayName == '$fof_query'c" \
-            | grep -v $HOME/Library \
-            | head -1)
+        fof_filepath=$(
+            perl -e '@K=sort{length($a) <=> length($b)}<>; print "$K[0]"' <(
+                mdfind -onlyin $fof_path "kMDItemDisplayName == '$fof_query'c" \
+                | grep -v $HOME/Library
+            )
+        )
 
         if [[ -z $fof_filepath ]]; then
             # No matching file
